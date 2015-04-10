@@ -6,6 +6,8 @@ Turn a protocol string into a transport duplex stream.
 npm install transport-stream
 ```
 
+[![build status](http://img.shields.io/travis/mafintosh/transport-stream.svg?style=flat)](http://travis-ci.org/mafintosh/transport-stream)
+
 Ships with support for transports that pipes to remote commands over ssh,
 piping to the processes spawned on local machine in other folder, http and https.
 
