@@ -1,0 +1,28 @@
+{
+  "name": "transport-stream",
+  "version": "0.0.0",
+  "description": "Turn a protocol string into a transport duplex stream.",
+  "main": "index.js",
+  "dependencies": {
+    "duplexify": "^3.2.0",
+    "execspawn": "^0.2.1"
+  },
+  "devDependencies": {
+    "concat-stream": "^1.4.8",
+    "standard": "^3.5.0",
+    "tape": "^4.0.0"
+  },
+  "scripts": {
+    "test": "standard && tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mafintosh/transport-stream.git"
+  },
+  "author": "Mathias Buus (@mafintosh)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mafintosh/transport-stream/issues"
+  },
+  "homepage": "https://github.com/mafintosh/transport-stream"
+}
