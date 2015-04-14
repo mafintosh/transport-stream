@@ -41,8 +41,8 @@ var request = function (mod, cmd, u) {
   return stream
 }
 
-var ssh = function (cmd, u) {
-  var cwd = u.path ? u.path.slice(2) : ''
+var ssh = function (cmd, u, transport) {
+  var cwd = transport.slice(6).split(':')[1] || ''
   cmd = 'PATH="$PATH:/usr/local/bin" ' + cmd
   if (cwd) cmd = 'cd ' + JSON.stringify(cwd) + '; ' + cmd
   return exec(cmd, {user: u.auth || process.env.USER, host: u.host})
@@ -58,9 +58,13 @@ var fileMaybe = function (cmd, transport) {
 
     var child = execspawn(cmd, {cwd: transport})
 
+    child.stderr.setEncoding('utf-8')
+    child.stderr.on('data', function (data) {
+      stream.emit('warn', data)
+    })
+
     stream.setReadable(child.stdout)
     stream.setWritable(child.stdin)
-    child.stderr.resume()
   })
 
   return stream
@@ -81,7 +85,7 @@ module.exports = function (opts) {
     if (custom) return custom(transport, opts, u)
 
     if (custom !== false) {
-      if (cmd && protocolName === 'ssh') return ssh(cmd, u)
+      if (cmd && protocolName === 'ssh') return ssh(cmd, u, transport)
       if (cmd && protocolName === 'file') return fileMaybe(cmd, transport.replace(/^file:\/\//, ''))
       if (protocolName === 'http') return request(http, cmd, u)
       if (protocolName === 'https') return request(https, cmd, u)
