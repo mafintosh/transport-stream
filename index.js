@@ -42,7 +42,7 @@ var request = function (mod, cmd, u) {
 }
 
 var ssh = function (cmd, u, transport) {
-  var cwd = transport.slice(6).split(':')[1] || ''
+  var cwd = transport.slice(6).split('@').pop().split(':')[1] || ''
   cmd = 'PATH="$PATH:/usr/local/bin" ' + cmd
   if (cwd) cmd = 'cd ' + JSON.stringify(cwd) + '; ' + cmd
   var username = u.auth && u.auth.split(':')[0] || process.env.USER
