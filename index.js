@@ -45,7 +45,9 @@ var ssh = function (cmd, u, transport) {
   var cwd = transport.slice(6).split(':')[1] || ''
   cmd = 'PATH="$PATH:/usr/local/bin" ' + cmd
   if (cwd) cmd = 'cd ' + JSON.stringify(cwd) + '; ' + cmd
-  return exec(cmd, {user: u.auth || process.env.USER, host: u.host})
+  var username = u.auth && u.auth.split(':')[0] || process.env.USER
+  var password = u.auth && u.auth.split(':')[1] || undefined
+  return exec(cmd, {user: username, password: password, host: u.host})
 }
 
 var fileMaybe = function (cmd, transport) {
