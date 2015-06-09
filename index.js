@@ -65,6 +65,14 @@ var fileMaybe = function (cmd, transport) {
       stream.emit('warn', data)
     })
 
+    child.on('error', function (err) {
+      stream.destroy(err)
+    })
+
+    child.on('exit', function (code) {
+      if (code) stream.destroy(new Error('Command failed with exit code: ' + code))
+    })
+
     stream.setReadable(child.stdout)
     stream.setWritable(child.stdin)
   })

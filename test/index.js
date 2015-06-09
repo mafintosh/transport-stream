@@ -43,3 +43,18 @@ tape('file transport', function (t) {
     t.ok(err, 'had error')
   })
 })
+
+tape('spawned program does not exist', function (t) {
+  t.plan(1)
+
+  var createStream = transports({
+    command: '/i/am/not/a/program'
+  })
+
+  var stream = createStream('file://' + path.join(__dirname, 'fixtures'))
+
+  stream.on('error', function (err) {
+    t.ok(err, 'had error')
+    t.end()
+  })
+})
