@@ -70,7 +70,10 @@ var fileMaybe = function (cmd, transport) {
     })
 
     child.on('exit', function (code) {
-      if (code) stream.destroy(new Error('Command failed with exit code: ' + code))
+      if (!code) return
+      var err = new Error('Command failed with exit code: ' + code)
+      err.code = code
+      stream.destroy(err)
     })
 
     stream.setReadable(child.stdout)
