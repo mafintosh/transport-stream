@@ -32,7 +32,10 @@ var request = function (mod, cmd, u) {
     headers: headers
   })
 
+  if (!req._header && req._implicitHeader) req._implicitHeader()
+  if (req._send) req._send(new Buffer(0))
   stream.setWritable(req)
+
   req.on('response', function (res) {
     if (!/2\d\d/.test(res.statusCode)) return stream.destroy(error(res))
     stream.setReadable(res)
