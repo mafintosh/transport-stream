@@ -11,7 +11,7 @@ var destroy = function () {
 }
 
 var error = function (res) {
-  var err = new Error('Request failed')
+  var err = new Error('Request failed with status ' + res.statusCode)
   err.status = res.statusCode
   err.headers = res.headers
   return err
