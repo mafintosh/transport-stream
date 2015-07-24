@@ -1,10 +1,13 @@
-var duplexify = require('duplexify')
-var exec = require('ssh-exec')
-var execspawn = require('execspawn')
 var url = require('url')
 var fs = require('fs')
 var http = require('http')
 var https = require('https')
+var duplexify = require('duplexify')
+var pumpify = require('pumpify')
+var exec = require('ssh-exec')
+var execspawn = require('execspawn')
+var debug = require('debug')('transport-stream')
+var debugStream = require('debug-stream')(function (out) { debug('buffer', {length: out.length, data: out}) })
 
 var destroy = function () {
   this.destroy()
@@ -91,22 +94,26 @@ module.exports = function (opts) {
   var cmd = opts && opts.command
 
   return function (transport) {
-    if (!transport) throw new Error('Transport required')
-    if (transport === '-') return duplexify(process.stdout, process.stdin, {end: false}).on('finish', destroy)
+    return pumpify(getTransport(), debugStream())
+    
+    function getTransport () {
+      if (!transport) throw new Error('Transport required')
+      if (transport === '-') return duplexify(process.stdout, process.stdin, {end: false}).on('finish', destroy)
 
-    var u = url.parse(transport)
-    var protocolName = u.protocol ? u.protocol.slice(0, -1) : 'file'
-    var custom = protocols[protocolName]
+      var u = url.parse(transport)
+      var protocolName = u.protocol ? u.protocol.slice(0, -1) : 'file'
+      var custom = protocols[protocolName]
 
-    if (custom) return custom(transport, opts, u)
+      if (custom) return custom(transport, opts, u)
 
-    if (custom !== false) {
-      if (cmd && protocolName === 'ssh') return ssh(cmd, u, transport)
-      if (cmd && protocolName === 'file') return fileMaybe(cmd, transport.replace(/^file:\/\//, ''))
-      if (protocolName === 'http') return request(http, cmd, u)
-      if (protocolName === 'https') return request(https, cmd, u)
+      if (custom !== false) {
+        if (cmd && protocolName === 'ssh') return ssh(cmd, u, transport)
+        if (cmd && protocolName === 'file') return fileMaybe(cmd, transport.replace(/^file:\/\//, ''))
+        if (protocolName === 'http') return request(http, cmd, u)
+        if (protocolName === 'https') return request(https, cmd, u)
+      }
+
+      throw new Error('Unsupported protocol')
     }
-
-    throw new Error('Unsupported protocol')
   }
 }
