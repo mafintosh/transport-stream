@@ -4,6 +4,7 @@
   "description": "Turn a protocol string into a transport duplex stream.",
   "main": "index.js",
   "dependencies": {
+    "debug": "^2.2.0",
     "debug-stream": "^3.0.0",
     "duplexify": "^3.2.0",
     "execspawn": "^0.2.1",
