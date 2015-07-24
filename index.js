@@ -89,16 +89,17 @@ var fileMaybe = function (cmd, transport) {
   return stream
 }
 
+var loggers = {
+  out: debugStream(debugLogger('out')),
+  in: debugStream(debugLogger('in'))
+}
+
 module.exports = function (opts) {
   var protocols = (opts && opts.protocols) || {}
   var cmd = opts && opts.command
 
   return function (transport) {
     var transportStream = getTransport()
-    var loggers = {
-      out: debugStream(debugLogger('out')),
-      in: debugStream(debugLogger('in'))
-    }
     if (!loggers.out.enabled) return transportStream
     else return pumpify(loggers.out(), transportStream, loggers.in())
 
