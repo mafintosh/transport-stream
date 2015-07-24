@@ -95,9 +95,13 @@ module.exports = function (opts) {
 
   return function (transport) {
     var transportStream = getTransport()
-    if (!process.env.DEBUG) return transportStream
-    else return pumpify(debugStream(debugLogger('out')), transportStream, debugStream(debugLogger('in')))
-    
+    var loggers = {
+      out: debugStream(debugLogger('out')),
+      in: debugStream(debugLogger('in'))
+    }
+    if (!loggers.out.enabled) return transportStream
+    else return pumpify(loggers.out(), transportStream, loggers.in())
+
     function getTransport () {
       if (!transport) throw new Error('Transport required')
       if (transport === '-') return duplexify(process.stdout, process.stdin, {end: false}).on('finish', destroy)
@@ -122,6 +126,6 @@ module.exports = function (opts) {
 
 function debugLogger (prefix) {
   return function (buf) {
-    debug(prefix, {length: buf.length, data: buf})
+    debug(prefix, {length: buf.length, data: buf.toString()})
   }
 }
