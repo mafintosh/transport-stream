@@ -7,7 +7,7 @@ var pumpify = require('pumpify')
 var exec = require('ssh-exec')
 var execspawn = require('execspawn')
 var debug = require('debug')('transport-stream')
-var debugStream = require('debug-stream')(function (out) { debug('buffer', {length: out.length, data: out}) })
+var debugStream = require('debug-stream')
 
 var destroy = function () {
   this.destroy()
@@ -94,7 +94,9 @@ module.exports = function (opts) {
   var cmd = opts && opts.command
 
   return function (transport) {
-    return pumpify(getTransport(), debugStream())
+    var transportStream = getTransport()
+    if (!process.env.DEBUG) return transportStream
+    else return pumpify(debugStream(debugLogger('out')), transportStream, debugStream(debugLogger('in')))
     
     function getTransport () {
       if (!transport) throw new Error('Transport required')
@@ -115,5 +117,11 @@ module.exports = function (opts) {
 
       throw new Error('Unsupported protocol')
     }
+  }
+}
+
+function debugLogger (prefix) {
+  return function (buf) {
+    debug(prefix, {length: buf.length, data: buf})
   }
 }
