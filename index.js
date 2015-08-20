@@ -39,7 +39,7 @@ var request = function (mod, cmd, u) {
   if (req._send) req._send(new Buffer(0))
   stream.setWritable(req)
 
-  req.on('socket', function(socket) {
+  req.on('socket', function (socket) {
     // http://neophob.com/2013/09/rpc-calls-and-mysterious-40ms-delay/
     socket.setNoDelay()
   })
