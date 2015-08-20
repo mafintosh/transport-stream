@@ -1,6 +1,6 @@
 {
   "name": "transport-stream",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "Turn a protocol string into a transport duplex stream.",
   "main": "index.js",
   "dependencies": {
