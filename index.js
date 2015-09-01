@@ -102,6 +102,7 @@ var loggers = {
 module.exports = function (opts) {
   var protocols = (opts && opts.protocols) || {}
   var cmd = opts && opts.command
+  if (!cmd) throw new Error('Must specify command')
 
   return function (transport) {
     var transportStream = getTransport()
