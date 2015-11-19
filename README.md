@@ -1,5 +1,7 @@
 # transport-stream
 
+**Maintenance note** This module isn't actively used in any of our projects anymore, so the amount of new features here will most likely be very low. However, we will fix any bugs and help co-maintain this with anyone interested.
+
 Turn a protocol string into a transport duplex stream.
 
 ```
