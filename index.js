@@ -1,10 +1,15 @@
 var url = require('url')
 var pumpify = require('pumpify')
+var duplexify = require('duplexify')
 var file = require('fs-transport-stream')
 var ssh = require('ssh-transport-stream')
 var http = require('http-transport-stream')
 var debug = require('debug')('transport-stream')
 var debugStream = require('debug-stream')
+
+var destroy = function () {
+  this.destroy()
+}
 
 var loggers = {
   out: debugStream(debugLogger('out')),
@@ -23,6 +28,7 @@ module.exports = function (opts) {
 
     function getTransport () {
       if (!transport) throw new Error('Transport required')
+      if (transport === '-') return duplexify(process.stdout, process.stdin, {end: false}).on('finish', destroy)
 
       var u = url.parse(transport)
       var protocolName = u.protocol ? u.protocol.slice(0, -1) : 'file'
